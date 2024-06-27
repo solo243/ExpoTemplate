@@ -1,16 +1,16 @@
 import { View, Text, FlatList, StyleSheet, Image } from 'react-native'
 import React from 'react'
 
-const AnimeCard = ({ height, width }) => {
-    const data = [1, 2, 3, 4, 5, 6, 7]
+const AnimeCard = ({ height, width, data }) => {
     const name = "Demon Slayer Hero the warrior"
     return (
-        <View style={{ marginTop: 15, }}>
+        <View style={{ marginTop: 13, }}>
             <FlatList
+                showsHorizontalScrollIndicator={false}
                 horizontal
-                data={data} renderItem={({ item }) => (
+                data={data > 0 ? [1, 2, 3, 4, 5, 5, 6, 7] : data} renderItem={({ item, index }) => (
                     <View style={[style.CardMainContainer, { height: height, width: width }]}>
-                        <Image source={{ uri: 'https://imgs.search.brave.com/SRc5x5upXlZyVXNGRj3eaeyRZKXRPcMvfLKj6l9ot8o/rs:fit:860:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJjYXZlLmNv/bS93cC93cDQ2OTE0/MzAuanBn' }} style={style.ImagePoster} />
+                        <Image source={{ uri: item.image || "https://i.pinimg.com/originals/92/4e/ae/924eaebfc55711f2f5379d82e0877328.jpg" }} style={style.ImagePoster} />
                     </View>
                 )} />
         </View>

@@ -7,11 +7,59 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import GenreCAtegory from '../Components/Home/GenreCAtegory';
 import AnimeCard from '../Components/Home/AnimeCard';
 import GenreTitleArea from '../Components/Home/GenreTitleArea';
-import { HomepageFetch } from '../Api/ApiCall';
+import { HomepageFetch, Movies, SpecialSeries, TvSeries } from '../Api/ApiCall';
+import CardAndGenre from '../Components/Home/CardAndGenre';
 
 export default function Home({ navigation }) {
 
+    const [data, setData] = useState([]);
+    const [MovieData, SetMovieData] = useState([]);
+    const [tv, setTv] = useState([]);
+    const [special, SetSpecial] = useState([]);
+    const HomeFetching = async () => {
+        try {
+            const data = await HomepageFetch();
+            setData(data);
+        } catch (e) {
+            console.log("error hai chutiye ", e)
+        }
+    }
+    const MovieFetching = async () => {
+        try {
+            const Data = await Movies(1);
+            SetMovieData(Data);
+            // console.log(Data)
+        } catch (e) {
+            console.log(e);
+        }
+    }
 
+    const TvSeriesFetch = async () => {
+        try {
+            const Data = await TvSeries(1);
+            setTv(Data);
+            // console.log(Data)
+        } catch (e) {
+            console.log(e);
+        }
+    }
+    const SpecialSeriesFetch = async () => {
+        try {
+            const Data = await SpecialSeries(1);
+            SetSpecial(Data);
+            // console.log(Data)
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    useEffect(() => (
+     
+        HomeFetching(),
+        MovieFetching(),
+        TvSeriesFetch(),
+        SpecialSeriesFetch() 
+    ), [])
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.MainColor }} >
@@ -66,27 +114,50 @@ export default function Home({ navigation }) {
                         <View>
                             {/* MovieGenre Area  */}
                             <View style={{ marginTop: 29 }}>
-                                <GenreTitleArea title={"Anime Genres"} />
-                                <GenreCAtegory />
+                                <GenreTitleArea title={"Anime Genres"} navigation={navigation} />
+                                {/* <GenreCAtegory /> */}
                                 <AnimeCard
                                     height={169}
                                     width={120}
+                                    data={data}
                                 />
                             </View>
-                            {/* POpular Movies */}
-                            <View style={style.MainCateContainer}>
-                                <GenreTitleArea title={"Popular Movies"} />
-                                <View>
-                                    <AnimeCard height={206} width={150} />
-                                </View>
+
+                            {/*TODO: Popular Movies  */}
+                            <CardAndGenre
+                                title={"Popular Movies"}
+                                height={214}
+                                width={145}
+                                data={MovieData}
+                                navigation={navigation} />
+
+
+                            {/*TODO: Popular Series  */}
+                            <CardAndGenre
+                                title={"Popular Series"}
+                                height={169}
+                                width={120}
+                                data={tv}
+                                navigation={navigation} />
+
+                            {/* Poster Image  */}
+                            <View style={style.HoriPosterCont}>
+                                <Image style={style.HorizontalPoster} source={{ uri: "https://i.pinimg.com/originals/92/4e/ae/924eaebfc55711f2f5379d82e0877328.jpg" }} />
                             </View>
+
+                            {/*TODO: Special Anime  */}
+                            <CardAndGenre
+                                title={"Special Anime"}
+                                height={169}
+                                width={120}
+                                data={special}
+                                navigation={navigation} />
+
                         </View>
                     </View>
                 </View>
                 {/* continue Watching  */}
-                <View style={style.Continue}>
 
-                </View>
                 <Text style={style.Thanks}>
                     Nothing to see here tanks for Download :)
                 </Text>
@@ -145,8 +216,8 @@ const style = StyleSheet.create({
     },
     ContentContainer: {
         width: '92%',
-        marginTop: 30,
-        alignSelf: 'center'
+        marginTop: 30, 
+        alignSelf: 'center' 
     },
     HeroText: {
         fontSize: 31,
@@ -178,5 +249,16 @@ const style = StyleSheet.create({
         textAlign: 'center',
         marginTop: 10,
         color: 'gray'
+    },
+    HoriPosterCont: {
+        marginTop: 40
+    },
+    HorizontalPoster: {
+        height: 130,
+        backgroundColor: 'gray',
+        width: '98%',
+        alignSelf: 'center',
+        borderRadius: 10,
+        borderCurve: 'continuous'
     }
 })

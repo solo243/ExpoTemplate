@@ -7,48 +7,49 @@ import {
   FlatList,
   ScrollView
 } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Colors } from '../Constants/Colors'
 import { Ionicons } from '@expo/vector-icons';
 import AnimeCard from '../Components/AnimeCard';
+import { SearchAnime } from '../Api/ApiCall';
 
 const Search = () => {
+
+
+  const [SearchData, SetSearchData] = useState([]);
+
+  const Searching = async (query) => {
+    const fetching = await fetch(`https://amniflix.vercel.app/anime/zoro/search?q=${query}}`)
+    const Converting = await fetching.json();
+    SetSearchData(Converting.results);
+  }
+
+
   return (
     <>
-      <ScrollView style={{ flex: 1, backgroundColor: Colors.MainColor }}>
-        <SafeAreaView style={{ flex: 1, backgroundColor: Colors.MainColor }}>
-          <ScrollView >
-            <View style={{ flex: 1 }}>
-              {/* TopSection  */}
-              {/* SearchSection  */}
-              <View style={style.SearchBarCont}>
-                <View style={style.SearchBar}>
-                  <Ionicons name="search" size={24} color='gray' />
-                  <TextInput cursorColor={'gray'}
-                    placeholder='Search here...'
-                    placeholderTextColor={'gray'}
-                    style={style.SearchBarInput}>
-                  </TextInput>
-                </View>
-              </View>
-              {/* Content Area  */}
-              <View style={style.ContentAreaCont}>
-                {/* <FlatList
-                numColumns={2}
-                columnWrapperStyle={{ justifyContent: 'space-around' }}
-                data={[1, 2, 3, 4, 5, 6, , 7, 8, 8]}
-                renderItem={({ item }) => (
-                  <View style={style.Card}>
-                    <Image style={style.Image} />
-                  </View>
-                )} /> */}
-                <AnimeCard />
+      <FlatList data={[1]} renderItem={({ index }) => (
+        <SafeAreaView key={index} style={{ flex: 1, backgroundColor: Colors.MainColor }}>
+          <View style={{ flex: 1 }}>
+            {/* TopSection  */}
+            {/* SearchSection  */}
+            <View style={style.SearchBarCont}>
+              <View style={style.SearchBar}>
+                <Ionicons name="search" size={24} color='gray' />
+                <TextInput onChangeText={(text) => Searching(text)} cursorColor={'gray'}
+                  placeholder='Search here...'
+                  placeholderTextColor={'gray'}
+                  style={style.SearchBarInput}>
+                </TextInput>
               </View>
             </View>
-          </ScrollView>
+            {/* Content Area  */}
+            <View style={style.ContentAreaCont}>
+              <AnimeCard data={SearchData} />
+            </View>
+          </View>
         </SafeAreaView>
-      </ScrollView>
+      )} style={{ flex: 1, backgroundColor: Colors.MainColor }} />
     </>
   )
 }

@@ -2,13 +2,13 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import React from 'react'
 import { AntDesign } from '@expo/vector-icons';
 
-const GenreTitleArea = ({ title }) => {
+const GenreTitleArea = ({ title, navigation }) => {
     return (
         <View style={style.MovieGenreRow}>
             <Text style={style.GenreText}>
                 {title}
             </Text>
-            <TouchableOpacity style={style.SeeAllContainer}>
+            <TouchableOpacity style={style.SeeAllContainer} onPress={() => navigation.navigate("Categories")}>
                 <Text style={style.SeeAllText}> See all </Text>
                 <AntDesign name="rightcircleo" size={16} color="gray" />
             </TouchableOpacity>

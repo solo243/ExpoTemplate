@@ -1,16 +1,17 @@
 import { View, Text, FlatList, StyleSheet, Image } from 'react-native'
 import React from 'react'
 
-const AnimeCard = () => {
+const AnimeCard = ({ data }) => {
     return (
         <View style={style.ContentAreaCont}>
             <FlatList
                 numColumns={2}
-                columnWrapperStyle={{ justifyContent: 'space-around' }}
-                data={[1, 2, 3, 4, 5, 6, , 7, 8, 8]}
+                columnWrapperStyle={{ gap: 11.5, justifyContent: 'center' }}
+                data={data}
                 renderItem={({ item }) => (
                     <View style={style.Card}>
-                        <Image style={style.Image} />
+                        <Text>asdhaoshdoasohdoahsodh</Text>
+                        <Image source={item.image} style={style.Image} />
                     </View>
                 )} />
         </View>
@@ -28,12 +29,12 @@ const style = StyleSheet.create({
         borderRadius: 10,
         borderCurve: 'continuous',
         width: '46%',
-        marginBottom: 18,
+        marginBottom: 10,
         backgroundColor: 'gray'
     },
     Image: {
-        height: '100%',
-        width: '100%',
+        height: 150,
+        width: 140,
         borderRadius: 10,
     }
 })

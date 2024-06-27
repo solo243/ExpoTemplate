@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, FlatList, VirtualizedList } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Colors } from '../Constants/Colors'
@@ -10,16 +10,27 @@ const Save = () => {
             flex: 1,
             backgroundColor: Colors.MainColor
         }}>
-            <ScrollView>
-                <View style={{ flex: 1 }}>
-                    {/* TOpBar  */}
-                    <View style={style.TopBar}>
-                        <Text style={style.MyText}> My Anime List!</Text>
+            <FlatList
+                data={[1]}
+                renderItem={({ index }) => (
+                    <View key={index} style={{ flex: 1 }}>
+                        {/* TOpBar  */}
+                        <View style={style.TopBar}>
+                            <Text style={style.MyText}> My Anime List!</Text>
+                        </View>
+                        {/* Content Area  */}
+                        <View style={style.FlatListCont}>
+                            <FlatList data={[1, 2, 3, 4, 4, 5, 6, 7]} renderItem={({ item }) => (
+                                <View style={style.AnimeCardCont}>
+                                    <View style={style.HorizontalCard}>
+
+                                    </View>
+                                </View>
+                            )} />
+                        </View>
+
                     </View>
-                    {/* Content Area  */}
-                    <AnimeCard />
-                </View>
-            </ScrollView>
+                )} />
         </SafeAreaView>
     )
 }
@@ -34,6 +45,17 @@ const style = StyleSheet.create({
         fontSize: 22,
         color: 'white'
         , fontWeight: '600'
+    }, AnimeCardCont: {
+        height: 100,
+        width: '100%',
+        // backgroundColor: 'red',
+        marginBottom: 20,
+        alignItems: 'center'
+    }, HorizontalCard: {
+        backgroundColor: 'green',
+        borderRadius: 10,
+        width: '92%',
+        height: 100
     }
 })
 
