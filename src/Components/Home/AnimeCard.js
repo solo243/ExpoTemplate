@@ -1,17 +1,32 @@
-import { View, Text, FlatList, StyleSheet, Image } from 'react-native'
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
+import { moderateScale } from 'react-native-size-matters'
 
-const AnimeCard = ({ height, width, data }) => {
-    const name = "Demon Slayer Hero the warrior"
+const AnimeCard = ({ height, width, data, navigation }) => {
     return (
-        <View style={{ marginTop: 13, }}>
+        <View style={{ marginTop: 8, width: '94%', alignSelf: 'center' }}>
             <FlatList
                 showsHorizontalScrollIndicator={false}
                 horizontal
-                data={data > 0 ? [1, 2, 3, 4, 5, 5, 6, 7] : data} renderItem={({ item, index }) => (
-                    <View style={[style.CardMainContainer, { height: height, width: width }]}>
-                        <Image source={{ uri: item.image || "https://i.pinimg.com/originals/92/4e/ae/924eaebfc55711f2f5379d82e0877328.jpg" }} style={style.ImagePoster} />
-                    </View>
+                data={data == 0 ? [1, 2, 3, 45, 6, 7,] : data}
+                renderItem={({ item, index }) => (
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("Details", { id: item.id })}
+                        activeOpacity={1}
+                        style={[style.CardMainContainer,
+                        index == 0 ? { marginLeft: moderateScale(0) } :
+                            { marginStart: 0 },
+                        { height: height, width: width }]}>
+                        <Image
+                            source={item.image ?
+                                { uri: item.image } :
+                                { uri: "http://" }}
+                            style={style.ImagePoster} />
+                        <Text numberOfLines={2}
+                            style={style.TitleText}>
+                            {item.title}
+                        </Text>
+                    </TouchableOpacity>
                 )} />
         </View>
     )
@@ -19,13 +34,20 @@ const AnimeCard = ({ height, width, data }) => {
 
 const style = StyleSheet.create({
     CardMainContainer: {
-        marginStart: 10,
-        backgroundColor: 'gray',
+        marginRight: 10,
         borderRadius: 10
     }, ImagePoster: {
         height: '100%',
         width: '100%',
+        backgroundColor: 'gray',
         borderRadius: 10,
+    },
+    TitleText: {
+        paddingHorizontal: 10,
+        fontWeight: '400',
+        color: 'white',
+        bottom: 0,
+        textAlign: 'center'
     }
 })
 export default AnimeCard

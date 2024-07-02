@@ -1,5 +1,17 @@
 const baseUrl = "https://amniflix.vercel.app/anime/zoro/"
 
+
+
+export const ApiFetching = async () => {
+    const UrlFetch = await fetch("https://test1.welcomesir48u.workers.dev/");
+    const convert = await UrlFetch.json();
+    console.log(convert);
+}
+
+
+
+
+
 const ApiCall = async (endpoint) => {
     try {
         const call = await fetch(endpoint);
@@ -12,11 +24,17 @@ const ApiCall = async (endpoint) => {
 
 };
 
+
 // TODO: Restart from Here Upper is backUp
 export const HomepageFetch = () => {
     const url = `${baseUrl}/home`;
     return ApiCall(url);
 };
+
+export const AnDetails = (id) => {
+    const url = `${baseUrl}/info?id=${id}`
+    return ApiCall(url) && console.log(url);
+}
 
 export const Movies = (page) => {
     const url = `${baseUrl}/movie?page=${page}`;

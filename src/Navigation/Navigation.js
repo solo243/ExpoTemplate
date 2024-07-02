@@ -35,6 +35,7 @@ export const Navigation = () => {
             tabBarShowLabel: false
         }}>
             <Tab.Screen name='Home' component={Home} options={{
+
                 tabBarIcon: ({ focused }) =>
                     focused ? (
                         <MaterialCommunityIcons name="home-variant" size={24} color="red" />
@@ -74,7 +75,10 @@ export const Navigation = () => {
 export const MainNavigation = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Navigator
+                screenOptions={{
+                    headerShown: false
+                }}>
                 <Stack.Screen
                     name="MainComponents"
                     component={Navigation} />
@@ -86,6 +90,9 @@ export const MainNavigation = () => {
                     name="Categories"
                     component={Cetegory} />
                 <Stack.Screen
+                    options={{
+                        animation: 'fade_from_bottom'
+                    }}
                     name='Details'
                     component={DetailScreen} />
             </Stack.Navigator>

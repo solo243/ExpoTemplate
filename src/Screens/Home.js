@@ -7,15 +7,19 @@ import { FontAwesome6 } from '@expo/vector-icons';
 import GenreCAtegory from '../Components/Home/GenreCAtegory';
 import AnimeCard from '../Components/Home/AnimeCard';
 import GenreTitleArea from '../Components/Home/GenreTitleArea';
-import { HomepageFetch, Movies, SpecialSeries, TvSeries } from '../Api/ApiCall';
+import { ApiFetching, HomepageFetch, MostPopular, Movies, SpecialSeries, TvSeries } from '../Api/ApiCall';
 import CardAndGenre from '../Components/Home/CardAndGenre';
+import { moderateScale } from 'react-native-size-matters';
 
 export default function Home({ navigation }) {
+
+
 
     const [data, setData] = useState([]);
     const [MovieData, SetMovieData] = useState([]);
     const [tv, setTv] = useState([]);
     const [special, SetSpecial] = useState([]);
+    const [popular, Setpopular] = useState([]);
     const HomeFetching = async () => {
         try {
             const data = await HomepageFetch();
@@ -53,13 +57,28 @@ export default function Home({ navigation }) {
         }
     }
 
-    useEffect(() => (
-     
+
+
+
+    const PopularFetch = async () => {
+        try {
+            const Data = await MostPopular();
+            Setpopular(Data);
+
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+
+    useEffect(() => {
         HomeFetching(),
-        MovieFetching(),
-        TvSeriesFetch(),
-        SpecialSeriesFetch() 
-    ), [])
+            MovieFetching(),
+            TvSeriesFetch(),
+            SpecialSeriesFetch(), PopularFetch()
+    }, [3000])
+
+
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.MainColor }} >
@@ -88,7 +107,7 @@ export default function Home({ navigation }) {
                     {/* TODO: Slider Container  */}
                     <View style={style.SliderContainer}>
                         <View style={style.Slider}>
-                            <Image source={{ uri: 'https://imgs.search.brave.com/SRc5x5upXlZyVXNGRj3eaeyRZKXRPcMvfLKj6l9ot8o/rs:fit:860:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJjYXZlLmNv/bS93cC93cDQ2OTE0/MzAuanBn' }}
+                            <Image source={{ uri: 'https://i.pinimg.com/564x/97/c4/51/97c45187dc99191f51066b04b0051b70.jpg' }}
                                 style={{ height: '100%', borderRadius: 10, }} />
                         </View>
                     </View>
@@ -114,30 +133,33 @@ export default function Home({ navigation }) {
                         <View>
                             {/* MovieGenre Area  */}
                             <View style={{ marginTop: 29 }}>
-                                <GenreTitleArea title={"Anime Genres"} navigation={navigation} />
-                                {/* <GenreCAtegory /> */}
-                                <AnimeCard
-                                    height={169}
-                                    width={120}
-                                    data={data}
-                                />
+                                <CardAndGenre
+                                    title={"Trending Anime"}
+                                    navigation={navigation}
+                                    height={moderateScale(169)}
+                                    width={moderateScale(120)}
+                                    genre={"tv"}
+                                    data={data} />
                             </View>
 
                             {/*TODO: Popular Movies  */}
                             <CardAndGenre
                                 title={"Popular Movies"}
-                                height={214}
-                                width={145}
+                                height={moderateScale(214)}
+                                width={moderateScale(145)}
                                 data={MovieData}
+                                genre={"movie"}
                                 navigation={navigation} />
+
 
 
                             {/*TODO: Popular Series  */}
                             <CardAndGenre
                                 title={"Popular Series"}
-                                height={169}
-                                width={120}
-                                data={tv}
+                                height={moderateScale(169)}
+                                width={moderateScale(120)}
+                                data={popular}
+                                genre={"most-popular"}
                                 navigation={navigation} />
 
                             {/* Poster Image  */}
@@ -145,13 +167,25 @@ export default function Home({ navigation }) {
                                 <Image style={style.HorizontalPoster} source={{ uri: "https://i.pinimg.com/originals/92/4e/ae/924eaebfc55711f2f5379d82e0877328.jpg" }} />
                             </View>
 
+
                             {/*TODO: Special Anime  */}
                             <CardAndGenre
                                 title={"Special Anime"}
-                                height={169}
-                                width={120}
+                                height={moderateScale(169)}
+                                width={moderateScale(120)}
                                 data={special}
+                                genre={"special"}
                                 navigation={navigation} />
+
+
+                            <CardAndGenre
+                                title={"Tv Series"}
+                                height={moderateScale(169)}
+                                width={moderateScale(120)}
+                                data={tv}
+                                genre={"tv"}
+                                navigation={navigation} />
+
 
                         </View>
                     </View>
@@ -173,7 +207,6 @@ const style = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 13,
-
     },
     ProfileImage: {
         height: 50,
@@ -215,22 +248,24 @@ const style = StyleSheet.create({
         backgroundColor: 'gray'
     },
     ContentContainer: {
-        width: '92%',
-        marginTop: 30, 
-        alignSelf: 'center' 
+        width: '100%',
+        // backgroundColor: 'red',
+        marginTop: 30,
+        alignSelf: 'center'
     },
     HeroText: {
         fontSize: 31,
         fontWeight: '600',
-        marginStart: 7,
+        marginStart: 15,
         color: 'white',
         paddingBottom: 2,
     },
     SearchBar: {
         height: 52,
-        borderRadius: 10,
-        width: '100%',
-        marginTop: 18,
+        borderRadius: 7,
+        width: '92%',
+        alignSelf: 'center',
+        marginTop: 17,
         alignItems: 'center',
         backgroundColor: '#272a2f',
         flexDirection: 'row',
@@ -254,9 +289,9 @@ const style = StyleSheet.create({
         marginTop: 40
     },
     HorizontalPoster: {
-        height: 130,
+        height: moderateScale(130),
         backgroundColor: 'gray',
-        width: '98%',
+        width: '92%',
         alignSelf: 'center',
         borderRadius: 10,
         borderCurve: 'continuous'

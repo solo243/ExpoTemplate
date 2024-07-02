@@ -8,13 +8,15 @@ const CardAndGenre = ({
     data,
     title,
     height,
-    width
+    width,
+    genre
 }) => {
     return (
         <View style={style.MainCateContainer}>
-            <GenreTitleArea title={title} navigation={navigation} />
+            <GenreTitleArea title={title} navigation={navigation} genre={genre} />
             <View>
                 <AnimeCard
+                    navigation={navigation}
                     height={height}
                     width={width}
                     data={data}
@@ -25,7 +27,7 @@ const CardAndGenre = ({
 }
 const style = StyleSheet.create({
     MainCateContainer: {
-        marginTop: 19
+        marginTop: 14
     },
 })
 export default CardAndGenre

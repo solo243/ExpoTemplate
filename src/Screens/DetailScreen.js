@@ -1,25 +1,79 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, ScrollView } from 'react-native'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Colors } from '../Constants/Colors'
 import { Entypo } from '@expo/vector-icons';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-const DetailScreen = () => {
+import { RFValue } from 'react-native-responsive-fontsize';
+const DetailScreen = ({ route, navigation }) => {
+    const RedirectedData = route.params.id
 
     const [isFev, SetisFev] = useState(false)
+    const [loading, SetLoading] = useState(true);
+    const [realData, SetrealData] = useState([]);
+
+
+    const animeFetch = async (RedirectedData) => {
+
+        try {
+            const fetching = await fetch(`https://amniflix.vercel.app/anime/zoro/info?id=${RedirectedData}`);
+            const convert = await fetching.json();
+            SetrealData(convert);
+            SetLoading(false)
+            console.log("Api is called broo")
+            console.log("lodaing was false ")
+        } catch (e) {
+            SetLoading(true)
+            console.log(e)
+        }
+
+    }
+
+    // if (loading) {
+    //     return <LoadingScreen />
+    // }
+
+
+
+    useEffect(() => {
+        animeFetch(RedirectedData)
+    }, [RedirectedData]);
+
+
+
+    // TODO: This is a SLiderAnime Cards 
+    const SideAnimeCards = ({ title, data }) => (
+        <>
+            <Text style={style.RelatedText}>{title}</Text>
+            <FlatList
+                horizontal
+                data={data || [1, 2, 3, 4, 45, 6, 7]}
+                renderItem={({ item, index }) => (
+                    <TouchableOpacity
+                        // onPress={() => navigation.navigate("Details", { id: item.id })}
+                        onPress={() => animeFetch(item.id)}
+                        style={[style.AnimeCard,
+                        index == 0 ?
+                            { marginLeft: 20 }
+                            :
+                            { marginLeft: 0 }]}>
+                        <Image style={style.SuggestionImage} source={{ uri: item.image }} />
+                    </TouchableOpacity>
+                )} />
+        </>
+    )
 
     return (
         <SafeAreaView style={{
             flex: 1,
-
             backgroundColor: Colors.MainColor
         }}>
             <ScrollView>
                 <View style={{ flex: 1, marginTop: 12, paddingBottom: 30 }}>
                     <View style={style.TopBackAndHeart}>
-                        <TouchableOpacity style={style.TouchableBtnSize}>
+                        <TouchableOpacity onPress={() => navigation.goBack()} style={style.TouchableBtnSize}>
                             <AntDesign name="arrowleft" size={24} color="gray" />
                         </TouchableOpacity>
                         <TouchableOpacity style={style.TouchableBtnSize} onPress={() => SetisFev(!isFev)}>
@@ -32,12 +86,14 @@ const DetailScreen = () => {
                         </TouchableOpacity>
                     </View>
                     <View style={style.HeroContainer}>
-                        <Image style={style.PosterImage} source={{ uri: "https://imgs.search.brave.com/SRc5x5upXlZyVXNGRj3eaeyRZKXRPcMvfLKj6l9ot8o/rs:fit:860:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJjYXZlLmNv/bS93cC93cDQ2OTE0/MzAuanBn" }} />
-                        <Text numberOfLines={2} style={style.Title}> Demon Slayer </Text>
+                        <Image style={style.PosterImage} source={{ uri: realData.image }} />
+                        <Text numberOfLines={2} style={style.Title}>
+                            {realData.title || "Title Not Available"}
+                        </Text>
                         <View style={{ flexDirection: 'row' }}>
-                            <OtherInfoBlock title={"Action & Adventure"} />
-                            <OtherInfoBlock title={"2024"} />
-                            <OtherInfoBlock title={"2.5"} />
+                            <OtherInfoBlock title={realData.type || 'NA'} />
+                            <OtherInfoBlock title={"SubDub - " + realData.subOrDub || 'NA'} />
+                            <OtherInfoBlock title={"Ep " + realData.totalEpisodes || 'NA'} />
                         </View>
                     </View>
                     <TouchableOpacity style={style.PlayBtnCont} >
@@ -47,28 +103,17 @@ const DetailScreen = () => {
                         </Text>
                     </TouchableOpacity>
                     <Text numberOfLines={8} style={style.Description}>
-                        Demon Slayer: Kimetsu no Yaiba (鬼滅の刃, Kimetsu no Yaiba, rgh. "Blade of Demon Destruction")[4] is a Japanese manga series written and illustrated by Koyoharu Gotouge. It was serialized in Shueisha's shōnen manga magazine Weekly Shōnen Jump from February 2016 to May 2020, with its chapters collected in 23 tankōbon volumes. It has been published in English by Viz Media and simultaneously on the Manga Plus platform by Shueisha. It follows teenage Tanjiro Kamado, who strives to become a Demon Slayer after his family was slaughtered and his younger sister, Nezuko, is turned into a demon.
+                        {realData.description}
                     </Text>
-                    {/* More Like this  */}
+                    {/* Related ANime   */}
                     <View>
-                        <Text style={style.RelatedText}>More Like this </Text>
-                        <FlatList
-                            horizontal
-                            data={[1, 2, 3, 4, 5, 6, 7, 8]}
-                            renderItem={({ item, index }) => (
-                                <View style={[style.AnimeCard,
-                                index == 0 ?
-                                    { marginLeft: 20 }
-                                    :
-                                    { marginLeft: 0 }]}>
-                                </View>
-                            )} />
+                        <SideAnimeCards title={"Related Anime"} data={realData.relatedAnime} />
                     </View>
-
+                    <View>
+                        <SideAnimeCards title={"More Anime"} data={realData.recommendations} />
+                    </View>
                 </View>
-
             </ScrollView>
-
         </SafeAreaView>
     )
 }
@@ -76,7 +121,24 @@ const DetailScreen = () => {
 export default DetailScreen
 
 
+const LoadingScreen = () => (
+    <View style={{
+        flex: 1,
+        backgroundColor: Colors.MainColor,
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center'
+    }}>
+        <Image source={require('../../assets/LoadingImages/p1.gif')}
+            style={{ height: 200, width: 200, marginTop: -50 }} />
+        {/* <Text style={{ fontSize: RFValue(20), color: 'white', marginTop: 20 }}>Loading...</Text> */}
+    </View>
+)
 
+
+
+
+//TODO: OtherInfo Horizontal below Title Row 
 const OtherInfoBlock = ({ title }) => (
     <View style={style.OtherInfo}>
         <Entypo name="dot-single" size={24} color={Colors.SecondColor} />
@@ -106,6 +168,7 @@ const style = StyleSheet.create({
     },
     Title: {
         fontSize: 20,
+        textAlign: 'center',
         color: 'white',
         fontWeight: '600',
         marginTop: 18
@@ -168,5 +231,10 @@ const style = StyleSheet.create({
         height: 199,
         width: 133,
         marginTop: 10,
+    },
+    SuggestionImage: {
+        height: '100%',
+        borderRadius: 10,
+        width: '100%'
     }
 })
