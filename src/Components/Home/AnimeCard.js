@@ -1,10 +1,13 @@
 import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { moderateScale } from 'react-native-size-matters'
+import { LinearGradient } from 'expo-linear-gradient'
+
 
 const AnimeCard = ({ height, width, data, navigation }) => {
     return (
-        <View style={{ marginTop: 8, width: '94%', alignSelf: 'center' }}>
+
+        <View style={{ marginTop: 8, width: '97%', alignSelf: 'center' }}>
             <FlatList
                 showsHorizontalScrollIndicator={false}
                 horizontal
@@ -14,18 +17,16 @@ const AnimeCard = ({ height, width, data, navigation }) => {
                         onPress={() => navigation.navigate("Details", { id: item.id })}
                         activeOpacity={1}
                         style={[style.CardMainContainer,
-                        index == 0 ? { marginLeft: moderateScale(0) } :
+                        index == 0 ?
+                            { marginLeft: moderateScale(11) } :
                             { marginStart: 0 },
-                        { height: height, width: width }]}>
+                        ]}>
                         <Image
                             source={item.image ?
                                 { uri: item.image } :
                                 { uri: "http://" }}
-                            style={style.ImagePoster} />
-                        <Text numberOfLines={2}
-                            style={style.TitleText}>
-                            {item.title}
-                        </Text>
+                            style={[style.ImagePoster,
+                            { height: height, width: width }]} />
                     </TouchableOpacity>
                 )} />
         </View>
@@ -34,20 +35,19 @@ const AnimeCard = ({ height, width, data, navigation }) => {
 
 const style = StyleSheet.create({
     CardMainContainer: {
-        marginRight: 10,
+        marginRight: 7,
         borderRadius: 10
     }, ImagePoster: {
-        height: '100%',
-        width: '100%',
-        backgroundColor: 'gray',
+        backgroundColor: 'lightgray',
         borderRadius: 10,
     },
     TitleText: {
-        paddingHorizontal: 10,
+        paddingHorizontal: 12,
+        marginTop: 3,
         fontWeight: '400',
         color: 'white',
-        bottom: 0,
-        textAlign: 'center'
+        // bottom: 0,
+        // textAlign: 'center'
     }
 })
 export default AnimeCard

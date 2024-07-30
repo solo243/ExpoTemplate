@@ -6,25 +6,66 @@ import {
   TextInput,
   FlatList,
   ScrollView
+  , TouchableOpacity
 } from 'react-native'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Colors } from '../Constants/Colors'
 import { Ionicons } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons';
 import AnimeCard from '../Components/AnimeCard';
-import { SearchAnime } from '../Api/ApiCall';
 
-const Search = () => {
+
+export default function Search({ navigation }) {
 
 
   const [SearchData, SetSearchData] = useState([]);
+  const [query, setQuery] = useState("");
+  const [ApiQuery, setApiQuery] = useState("");
 
-  const Searching = async (query) => {
-    const fetching = await fetch(`https://amniflix.vercel.app/anime/zoro/search?q=${query}}`)
-    const Converting = await fetching.json();
-    SetSearchData(Converting.results);
-  }
+  const Searching = useCallback(
+    async (text) => {
+      try {
+        const URL = `https://amniflix.vercel.app/anime/zoro/${text}`
+        console.log(URL);
+        if (text < 3) {
+          return console.log("SHort hai ") && null
+        } else {
+          const fetching = await fetch(URL)
+          const Converting = await fetching.json();
+          if (Converting) {
+            console.log(Converting)
+            SetSearchData(Converting.results);
+          }
+        }
+      } catch (e) {
+        console.log("Error while Fetching..", e)
+      }
+    }, [])
 
+  const initialSearchCall = useCallback(
+    async (term) => {
+      if (term) {
+        await Searching(term);
+      }
+    }, [],
+  )
+
+  useEffect(() => {
+    if (ApiQuery) {
+      initialSearchCall(ApiQuery)
+    } else {
+      SetSearchData([])
+      console.log("Nothing found")
+    }
+  }, [ApiQuery])
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => setApiQuery(query), 800)
+    return () => {
+      clearTimeout(timeoutId)
+    }
+  }, [query]);
 
   return (
     <>
@@ -36,16 +77,27 @@ const Search = () => {
             <View style={style.SearchBarCont}>
               <View style={style.SearchBar}>
                 <Ionicons name="search" size={24} color='gray' />
-                <TextInput onChangeText={(text) => Searching(text)} cursorColor={'gray'}
+                <TextInput
+                  autoFocus={true}
+                  value={query}
+                  onChangeText={(text) => setQuery(text)} cursorColor={'gray'}
                   placeholder='Search here...'
                   placeholderTextColor={'gray'}
                   style={style.SearchBarInput}>
                 </TextInput>
+                {
+                  !query ? null : (
+                    <TouchableOpacity onPress={() => setQuery("")} style={style.ClearBtnCont}>
+                      <Entypo name="circle-with-cross" size={24} color="gray" />
+                    </TouchableOpacity>
+                  )
+                }
+
               </View>
             </View>
             {/* Content Area  */}
             <View style={style.ContentAreaCont}>
-              <AnimeCard data={SearchData} />
+              <AnimeCard data={SearchData} navigation={navigation} />
             </View>
           </View>
         </SafeAreaView>
@@ -73,7 +125,8 @@ const style = StyleSheet.create({
   },
   SearchBarInput: {
     height: '100%',
-    width: '90%',
+    width: '80%',
+    // backgroundColor: 'blue',
     marginStart: 10,
     color: 'white',
     fontSize: 16
@@ -95,6 +148,13 @@ const style = StyleSheet.create({
     height: '100%',
     width: '100%',
     borderRadius: 10,
+  },
+  ClearBtnCont: {
+    height: '100%',
+    // , backgroundColor: 'red',
+    flex: 1,
+    width: 40,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })
-export default Search

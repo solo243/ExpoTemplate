@@ -1,84 +1,21 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Feather } from '@expo/vector-icons';
 import { Colors } from '../Constants/Colors';
 import { FontAwesome6 } from '@expo/vector-icons';
-import GenreCAtegory from '../Components/Home/GenreCAtegory';
-import AnimeCard from '../Components/Home/AnimeCard';
-import GenreTitleArea from '../Components/Home/GenreTitleArea';
-import { ApiFetching, HomepageFetch, MostPopular, Movies, SpecialSeries, TvSeries } from '../Api/ApiCall';
 import CardAndGenre from '../Components/Home/CardAndGenre';
 import { moderateScale } from 'react-native-size-matters';
+import { RFValue } from 'react-native-responsive-fontsize';
+import Context from '../GlobalState/Context';
 
 export default function Home({ navigation }) {
-
-
-
-    const [data, setData] = useState([]);
-    const [MovieData, SetMovieData] = useState([]);
-    const [tv, setTv] = useState([]);
-    const [special, SetSpecial] = useState([]);
-    const [popular, Setpopular] = useState([]);
-    const HomeFetching = async () => {
-        try {
-            const data = await HomepageFetch();
-            setData(data);
-        } catch (e) {
-            console.log("error hai chutiye ", e)
-        }
-    }
-    const MovieFetching = async () => {
-        try {
-            const Data = await Movies(1);
-            SetMovieData(Data);
-            // console.log(Data)
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
-    const TvSeriesFetch = async () => {
-        try {
-            const Data = await TvSeries(1);
-            setTv(Data);
-            // console.log(Data)
-        } catch (e) {
-            console.log(e);
-        }
-    }
-    const SpecialSeriesFetch = async () => {
-        try {
-            const Data = await SpecialSeries(1);
-            SetSpecial(Data);
-            // console.log(Data)
-        } catch (e) {
-            console.log(e);
-        }
-    }
-
-
-
-
-    const PopularFetch = async () => {
-        try {
-            const Data = await MostPopular();
-            Setpopular(Data);
-
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-
-    useEffect(() => {
-        HomeFetching(),
-            MovieFetching(),
-            TvSeriesFetch(),
-            SpecialSeriesFetch(), PopularFetch()
-    }, [3000])
-
-
+    const {
+        popular,
+        MovieData,
+        tv,
+        special,
+        data } = useContext(Context)
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.MainColor }} >
@@ -122,7 +59,10 @@ export default function Home({ navigation }) {
                             </Text>
                         </>
                         {/*TODO: SearchBar  */}
-                        <TouchableOpacity activeOpacity={1} onPress={() => navigation.navigate("Search")} style={style.SearchBar}>
+                        <TouchableOpacity
+                            activeOpacity={1}
+                            onPress={() => navigation.navigate("Search")}
+                            style={style.SearchBar}>
                             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 11 }}>
                                 <Feather name="search" size={24} color="#929192" />
                                 <Text style={style.SearchPlaceHolder}> Search Movie</Text>
@@ -254,11 +194,11 @@ const style = StyleSheet.create({
         alignSelf: 'center'
     },
     HeroText: {
-        fontSize: 31,
+        fontSize: RFValue(31),
         fontWeight: '600',
         marginStart: 15,
         color: 'white',
-        paddingBottom: 2,
+        // paddingBottom: 1,
     },
     SearchBar: {
         height: 52,

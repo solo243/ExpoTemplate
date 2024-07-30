@@ -1,41 +1,64 @@
-import { View, Text, FlatList, StyleSheet, Image } from 'react-native'
+import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
+import { moderateScale } from 'react-native-size-matters'
+import { RFValue } from 'react-native-responsive-fontsize'
+import { Colors } from '../Constants/Colors'
 
-const AnimeCard = ({ data }) => {
+const AnimeCard = ({ data, navigation }) => {
     return (
-        <View style={style.ContentAreaCont}>
+        <View style={style.FlatlistCont}>
             <FlatList
+                columnWrapperStyle={{ justifyContent: 'space-between' }}
                 numColumns={2}
-                columnWrapperStyle={{ gap: 11.5, justifyContent: 'center' }}
-                data={data}
-                renderItem={({ item }) => (
-                    <View style={style.Card}>
-                        <Text>asdhaoshdoasohdoahsodh</Text>
-                        <Image source={item.image} style={style.Image} />
-                    </View>
+                data={data || [1, 2, 3, 4, 5]} renderItem={({ item }) => (
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("Details", { id: item.id })}
+                        style={style.MainCard} >
+                        <Image source={{ uri: item.image || "https://cdni.iconscout.com/illustration/premium/thumb/404-7304110-5974976.png?f=webp" }}
+                            style={style.MainImage} />
+                        <View style={style.TitleBioCont}>
+                            <Text numberOfLines={2} style={style.TitleText}>{item.title || "Not Available"}</Text>
+                            <Text style={style.Type}>{item.type} | duration - {item.duration}</Text>
+                        </View>
+
+                    </TouchableOpacity>
                 )} />
         </View>
     )
 }
 const style = StyleSheet.create({
-    ContentAreaCont: {
-        width: '97%',
-        height: '100%',
-        // backgroundColor: 'red',
-        alignSelf: 'center',
+
+
+    FlatlistCont: {
+        width: '96%',
+        alignSelf: 'center'
     },
-    Card: {
-        height: 290,
-        borderRadius: 10,
-        borderCurve: 'continuous',
-        width: '46%',
+    MainCard: {
+        // height: 290,
+        width: '48.5%',
         marginBottom: 10,
+        borderRadius: 6,
+        backgroundColor: '#272a2f',
+        zIndex: 10,
+    },
+    MainImage: {
+        width: '100%',
+        height: moderateScale(200),
+
         backgroundColor: 'gray'
     },
-    Image: {
-        height: 150,
-        width: 140,
-        borderRadius: 10,
+    TitleText: {
+        fontSize: RFValue(15),
+        fontWeight: '500',
+        color: 'white'
+    }, TitleBioCont: {
+        paddingHorizontal: 7,
+        paddingTop: 6,
+        paddingBottom: 10
+    }, Type: {
+        // color: Colors.SecondColor,
+        color: 'gray',
+        marginTop: 0,
     }
 })
 export default AnimeCard

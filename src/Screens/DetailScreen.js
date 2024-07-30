@@ -1,4 +1,12 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, FlatList, ScrollView } from 'react-native'
+import {
+    View,
+    Text,
+    StyleSheet,
+    Button,
+    TouchableOpacity,
+    Image,
+    FlatList, ScrollView
+} from 'react-native'
 import React, { useState, useRef, useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Colors } from '../Constants/Colors'
@@ -7,6 +15,10 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { RFValue } from 'react-native-responsive-fontsize';
+import LoadingScreen from './LoadingScreen';
+import Modal from "react-native-modal";
+
+
 const DetailScreen = ({ route, navigation }) => {
     const RedirectedData = route.params.id
 
@@ -15,32 +27,31 @@ const DetailScreen = ({ route, navigation }) => {
     const [realData, SetrealData] = useState([]);
 
 
-    const animeFetch = async (RedirectedData) => {
 
+
+    const animeFetch = async (RedirectedData) => {
+        SetLoading(true)
         try {
             const fetching = await fetch(`https://amniflix.vercel.app/anime/zoro/info?id=${RedirectedData}`);
             const convert = await fetching.json();
             SetrealData(convert);
             SetLoading(false)
-            console.log("Api is called broo")
-            console.log("lodaing was false ")
+            console.log("Api is called Bro")
+            console.log("loading was false ")
         } catch (e) {
             SetLoading(true)
             console.log(e)
         }
-
     }
+    const [isModalVisible, setModalVisible] = useState(false);
 
-    // if (loading) {
-    //     return <LoadingScreen />
-    // }
-
-
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
 
     useEffect(() => {
         animeFetch(RedirectedData)
     }, [RedirectedData]);
-
 
 
     // TODO: This is a SLiderAnime Cards 
@@ -65,78 +76,75 @@ const DetailScreen = ({ route, navigation }) => {
         </>
     )
 
+
     return (
         <SafeAreaView style={{
             flex: 1,
             backgroundColor: Colors.MainColor
         }}>
-            <ScrollView>
-                <View style={{ flex: 1, marginTop: 12, paddingBottom: 30 }}>
-                    <View style={style.TopBackAndHeart}>
-                        <TouchableOpacity onPress={() => navigation.goBack()} style={style.TouchableBtnSize}>
-                            <AntDesign name="arrowleft" size={24} color="gray" />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={style.TouchableBtnSize} onPress={() => SetisFev(!isFev)}>
-                            {isFev
-                                ?
-                                <MaterialCommunityIcons name="cards-heart" size={26} color="red" />
-                                :
-                                <MaterialCommunityIcons name="cards-heart-outline" size={26} color="gray" />
-                            }
-                        </TouchableOpacity>
-                    </View>
-                    <View style={style.HeroContainer}>
-                        <Image style={style.PosterImage} source={{ uri: realData.image }} />
-                        <Text numberOfLines={2} style={style.Title}>
-                            {realData.title || "Title Not Available"}
-                        </Text>
-                        <View style={{ flexDirection: 'row' }}>
-                            <OtherInfoBlock title={realData.type || 'NA'} />
-                            <OtherInfoBlock title={"SubDub - " + realData.subOrDub || 'NA'} />
-                            <OtherInfoBlock title={"Ep " + realData.totalEpisodes || 'NA'} />
+            {loading ? (
+                <LoadingScreen />
+            ) : (
+                <ScrollView>
+                    <View style={{ flex: 1, marginTop: 12, paddingBottom: 30 }}>
+                        <View style={style.TopBackAndHeart}>
+                            <TouchableOpacity onPress={() => navigation.goBack()} style={style.TouchableBtnSize}>
+                                <AntDesign name="arrowleft" size={24} color="white" />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={style.TouchableBtnSize} onPress={() => SetisFev(!isFev)}>
+                                {isFev
+                                    ?
+                                    <MaterialCommunityIcons name="cards-heart" size={26} color="red" />
+                                    :
+                                    <MaterialCommunityIcons name="cards-heart-outline" size={26} color="white" />
+                                }
+                            </TouchableOpacity>
                         </View>
-                    </View>
-                    <TouchableOpacity style={style.PlayBtnCont} >
-                        <FontAwesome5 name="play" size={16} color="black" />
-                        <Text style={style.BtnText}>
-                            Play
+                        <View style={style.HeroContainer}>
+                            <Image style={style.PosterImage} source={{ uri: realData.image }} />
+                            <Text numberOfLines={2} style={style.Title}>
+                                {realData.title || "Title Not Available"}
+                            </Text>
+                            <View style={{ flexDirection: 'row' }}>
+                                <OtherInfoBlock title={realData.type || 'NA'} />
+                                <OtherInfoBlock title={"SubDub - " + realData.subOrDub || 'NA'} />
+                                <OtherInfoBlock title={"Ep " + realData.totalEpisodes || 'NA'} />
+                            </View>
+                        </View>
+                        <TouchableOpacity style={style.PlayBtnCont} >
+                            <FontAwesome5 name="play" size={16} color="black" />
+                            <Text style={style.BtnText}>
+                                Play
+                            </Text>
+                        </TouchableOpacity>
+                        <Text numberOfLines={8} style={style.Description}>
+                            {realData.description}
                         </Text>
-                    </TouchableOpacity>
-                    <Text numberOfLines={8} style={style.Description}>
-                        {realData.description}
-                    </Text>
-                    {/* Related ANime   */}
-                    <View>
-                        <SideAnimeCards title={"Related Anime"} data={realData.relatedAnime} />
+                        {/* Related ANime   */}
+                        <View>
+                            <SideAnimeCards title={"Related Anime"} data={realData.relatedAnime} />
+                        </View>
+                        <View>
+                            <SideAnimeCards title={"More Anime"} data={realData.recommendations} />
+                        </View>
+                        <Modal isVisible={isModalVisible}>
+                            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                <Text style={{
+                                    height: 200,
+                                    width: 200,
+                                    textAlign: 'center',
+                                    backgroundColor: 'red'
+                                }}>I am the modal content!</Text>
+                            </View>
+                        </Modal>
                     </View>
-                    <View>
-                        <SideAnimeCards title={"More Anime"} data={realData.recommendations} />
-                    </View>
-                </View>
-            </ScrollView>
+                </ScrollView>
+            )}
         </SafeAreaView>
     )
 }
 
 export default DetailScreen
-
-
-const LoadingScreen = () => (
-    <View style={{
-        flex: 1,
-        backgroundColor: Colors.MainColor,
-        height: '100%',
-        alignItems: 'center',
-        justifyContent: 'center'
-    }}>
-        <Image source={require('../../assets/LoadingImages/p1.gif')}
-            style={{ height: 200, width: 200, marginTop: -50 }} />
-        {/* <Text style={{ fontSize: RFValue(20), color: 'white', marginTop: 20 }}>Loading...</Text> */}
-    </View>
-)
-
-
-
 
 //TODO: OtherInfo Horizontal below Title Row 
 const OtherInfoBlock = ({ title }) => (
