@@ -1,11 +1,26 @@
 {
   "expo": {
     "name": "HelloExpo",
+    "plugins": [
+      [
+        "react-native-video",
+        {
+          "enableNotificationControls": true,
+          "androidExtensions": {
+            "useExoplayerRtsp": false,
+            "useExoplayerSmoothStreaming": false,
+            "useExoplayerHls": false,
+            "useExoplayerDash": false
+          }
+        }
+      ],
+      "expo-video"
+    ],
     "slug": "HelloExpo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "dark",
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
@@ -28,9 +43,6 @@
       "eas": {
         "projectId": "2454bb24-5c76-435d-ab17-540e5d84b1d4"
       }
-    },
-    "plugins": [
-      "expo-video"
-    ]
+    }
   }
 }
