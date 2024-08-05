@@ -143,7 +143,13 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
-
+    implementation project(':react-native-video')
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.14.2'
+    implementation 'com.google.android.exoplayer:exoplayer-dash:2.14.2'
+    implementation 'com.google.android.exoplayer:exoplayer-hls:2.14.2'
+    implementation 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.14.2'
+  
+  
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
     def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";
     def isWebpAnimatedEnabled = (findProperty('expo.webp.animated') ?: "") == "true";

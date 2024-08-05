@@ -226,7 +226,7 @@ const style = StyleSheet.create({
         color: 'gray'
     },
     HoriPosterCont: {
-        marginTop: 40
+        marginTop: 30
     },
     HorizontalPoster: {
         height: moderateScale(130),

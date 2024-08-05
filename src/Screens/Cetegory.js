@@ -158,7 +158,7 @@ const style = StyleSheet.create({
   MainCard: {
     // height: 290,
     width: '48.5%',
-
+    maxWidth: 250,
     marginBottom: 10,
     borderRadius: 6,
     backgroundColor: '#272a2f',
